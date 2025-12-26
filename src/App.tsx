@@ -1,69 +1,76 @@
-import { useEffect, useState } from "react";
-import { DndContext, closestCenter } from "@dnd-kit/core";
-import { SortableContext, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
-import { Todo } from "./types/todo";
-import { TodoItem } from "./components/TodoItem";
+import React, { useState, useEffect } from "react";
 import { TodoInput } from "./components/TodoInput";
 import { TodoFilters } from "./components/TodoFilters";
+import { TodoList } from "./components/TodoList";
+import { Todo } from "./types";
+import "./index.css";
 
-export default function App() {
+const LOCAL_STORAGE_KEY = "my-todo-app.todos";
+
+const App: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>(() => {
-    const saved = localStorage.getItem("todos");
-    return saved ? JSON.parse(saved) : [];
+    const storedTodos = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (storedTodos) {
+      return JSON.parse(storedTodos, (key, value) =>
+        key === "createdAt" || key === "updatedAt" ? new Date(value) : value
+      );
+    }
+    return [];
   });
 
-  const [filter, setFilter] = useState("all");
-  const [sortBy, setSortBy] = useState("created");
-  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState<"all" | "done" | "pending">("all");
+  const [searchText, setSearchText] = useState("");
+  const [sortBy, setSortBy] = useState<"created" | "updated" | "status">("created");
 
+  
+  // Save todos to localStorage whenever todos change
   useEffect(() => {
-    localStorage.setItem("todos", JSON.stringify(todos));
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(todos));
   }, [todos]);
 
   const addTodo = (text: string) => {
-    const now = new Date().toISOString();
-    setTodos([...todos, { id: Date.now(), text, done: false, createdAt: now, updatedAt: now }]);
+    if (!text.trim()) return;
+    const newTodo: Todo = {
+      id: Date.now(),
+      text,
+      done: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    setTodos([...todos, newTodo]);
   };
 
-  const toggleTodo = (id: number) => {
-    setTodos(todos.map(t => t.id === id ? { ...t, done: !t.done, updatedAt: new Date().toISOString() } : t));
+  const toggleDone = (id: number) => {
+    const updated = todos.map(todo =>
+      todo.id === id ? { ...todo, done: !todo.done, updatedAt: new Date() } : todo
+    );
+    setTodos(updated);
   };
 
-  const handleDragEnd = (event: any) => {
-    const { active, over } = event;
-    if (over && active.id !== over.id) {
-      const oldIndex = todos.findIndex(t => t.id === active.id);
-      const newIndex = todos.findIndex(t => t.id === over.id);
-      setTodos(arrayMove(todos, oldIndex, newIndex));
-    }
-  };
-
-  const visibleTodos = todos
-    .filter(t => filter === "all" || (filter === "done" ? t.done : !t.done))
-    .filter(t => t.text.toLowerCase().includes(search.toLowerCase()));
+  const reorderTodos = (newTodos: Todo[]) => setTodos(newTodos);
 
   return (
-    <div className="max-w-xl mx-auto p-4 space-y-4">
-      <h1 className="text-xl font-bold text-center">MyToDoApp</h1>
-      <TodoInput onAdd={addTodo} />
+    <div className="App">
+      <h1>My ToDo App</h1>
+      <TodoInput addTodo={addTodo} />
       <TodoFilters
         filter={filter}
-        sortBy={sortBy}
-        search={search}
         setFilter={setFilter}
+        searchText={searchText}
+        setSearchText={setSearchText}
+        sortBy={sortBy}
         setSortBy={setSortBy}
-        setSearch={setSearch}
       />
-
-      <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <SortableContext items={visibleTodos.map(t => t.id)} strategy={verticalListSortingStrategy}>
-          <div className="space-y-2">
-            {visibleTodos.map(todo => (
-              <TodoItem key={todo.id} todo={todo} onToggle={toggleTodo} />
-            ))}
-          </div>
-        </SortableContext>
-      </DndContext>
+      <TodoList
+        todos={todos}
+        toggleDone={toggleDone}
+        reorderTodos={reorderTodos}
+        filter={filter}
+        searchText={searchText}
+        sortBy={sortBy}
+      />
     </div>
   );
-}
+};
+
+export default App;

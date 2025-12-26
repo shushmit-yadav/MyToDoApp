@@ -1,30 +1,27 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
-interface TodoInputProps {
-  onAdd: (text: string) => void;
+interface Props {
+  addTodo: (text: string) => void;
 }
 
-export function TodoInput({ onAdd }: TodoInputProps) {
-  const [text, setText] = useState("");
+export const TodoInput: React.FC<Props> = ({ addTodo }) => {
+  const [input, setInput] = useState("");
 
-  const submit = () => {
-    if (!text.trim()) return;
-    onAdd(text);
-    setText("");
+  const handleAdd = () => {
+    addTodo(input);
+    setInput("");
   };
 
   return (
-    <div className="flex gap-2">
+    <div className="todo-input">
       <input
-        className="flex-1 border p-2 rounded"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        placeholder="Add a task"
-        aria-label="todo-input"
+        type="text"
+        value={input}
+        placeholder="Add new todo..."
+        onChange={(e) => setInput(e.target.value)}
+        onKeyDown={(e) => e.key === "Enter" && handleAdd()}
       />
-      <button onClick={submit} className="bg-blue-600 text-white px-4 rounded">
-        Add
-      </button>
+      <button onClick={handleAdd}>Add</button>
     </div>
   );
-}
+};

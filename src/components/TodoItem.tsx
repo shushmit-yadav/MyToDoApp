@@ -1,35 +1,20 @@
-import { Todo } from "../types/todo";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
+import React from "react";
+import { Todo } from "../types";
 
-interface TodoItemProps {
+interface Props {
   todo: Todo;
-  onToggle: (id: number) => void;
+  toggleDone: (id: number) => void;
 }
 
-export function TodoItem({ todo, onToggle }: TodoItemProps) {
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: todo.id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
+export const TodoItem: React.FC<Props> = ({ todo, toggleDone }) => {
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      className={`flex items-center justify-between p-3 rounded border shadow-sm bg-white ${todo.done ? "opacity-60 line-through" : ""}`}
-    >
-      <span className="flex-1 mr-2">{todo.text}</span>
+    <li className={todo.done ? "done" : ""}>
       <input
         type="checkbox"
         checked={todo.done}
-        onChange={() => onToggle(todo.id)}
-        aria-label="toggle-todo"
+        onChange={() => toggleDone(todo.id)}
       />
-    </div>
+      {todo.text}
+    </li>
   );
-}
+};

@@ -1,32 +1,40 @@
-interface TodoFiltersProps {
-  filter: string;
-  sortBy: string;
-  search: string;
-  setFilter: (v: string) => void;
-  setSortBy: (v: string) => void;
-  setSearch: (v: string) => void;
+import React from "react";
+
+interface Props {
+  filter: "all" | "done" | "pending";
+  setFilter: (value: "all" | "done" | "pending") => void;
+  searchText: string;
+  setSearchText: (text: string) => void;
+  sortBy: "created" | "updated" | "status";
+  setSortBy: (value: "created" | "updated" | "status") => void;
 }
 
-export function TodoFilters({ filter, sortBy, search, setFilter, setSortBy, setSearch }: TodoFiltersProps) {
+export const TodoFilters: React.FC<Props> = ({
+  filter,
+  setFilter,
+  searchText,
+  setSearchText,
+  sortBy,
+  setSortBy,
+}) => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-      <select value={filter} onChange={(e) => setFilter(e.target.value)}>
-        <option value="all">All</option>
-        <option value="done">Done</option>
-        <option value="pending">Pending</option>
-      </select>
-
-      <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-        <option value="created">Created</option>
-        <option value="updated">Updated</option>
-        <option value="status">Status</option>
-      </select>
+    <div className="filters">
+      <button onClick={() => setFilter("all")} disabled={filter === "all"}>All</button>
+      <button onClick={() => setFilter("done")} disabled={filter === "done"}>Done</button>
+      <button onClick={() => setFilter("pending")} disabled={filter === "pending"}>Pending</button>
 
       <input
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search"
+        type="text"
+        placeholder="Search..."
+        value={searchText}
+        onChange={(e) => setSearchText(e.target.value)}
       />
+
+      <select value={sortBy} onChange={(e) => setSortBy(e.target.value as any)}>
+        <option value="created">Created Date</option>
+        <option value="updated">Last Updated</option>
+        <option value="status">Status</option>
+      </select>
     </div>
   );
-}
+};
