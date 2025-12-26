@@ -1,103 +1,102 @@
-/* Reset & base styles */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f7f7f7;
+  background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
   color: #333;
   min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 50px;
 }
 
-/* App container */
+/* App card */
 .App {
+  width: 100%;
   max-width: 600px;
-  margin: 50px auto;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 30px 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(5px);
 }
 
-/* Heading */
 .App h1 {
   text-align: center;
-  margin-bottom: 20px;
-  color: #1976d2;
+  color: #1e3a8a; /* deep blue accent */
+  margin-bottom: 25px;
+  font-size: 2rem;
+  letter-spacing: 1px;
 }
 
-/* Todo Input */
+
 .todo-input {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   margin-bottom: 20px;
 }
 
 .todo-input input[type="text"] {
   flex: 1;
-  padding: 8px 12px;
-  border-radius: 6px;
+  padding: 10px 14px;
+  border-radius: 10px;
   border: 1px solid #ccc;
   font-size: 16px;
+  transition: border-color 0.2s;
+}
+
+.todo-input input[type="text"]:focus {
+  border-color: #1e3a8a;
+  outline: none;
 }
 
 .todo-input button {
-  padding: 8px 16px;
-  background-color: #1976d2;
+  padding: 10px 18px;
+  background-color: #1e3a8a;
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
   cursor: pointer;
-  font-size: 16px;
+  font-weight: bold;
   transition: background-color 0.2s;
 }
 
 .todo-input button:hover {
-  background-color: #115293;
+  background-color: #152766;
 }
 
-/* Filters */
+
 .filters {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 20px;
-  align-items: center;
+  margin-bottom: 25px;
   justify-content: center;
 }
 
 .filters button {
   padding: 6px 12px;
-  border: 1px solid #1976d2;
-  border-radius: 6px;
+  border: 1px solid #1e3a8a;
+  border-radius: 8px;
   background-color: white;
-  color: #1976d2;
+  color: #1e3a8a;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .filters button:disabled {
-  background-color: #1976d2;
+  background-color: #1e3a8a;
   color: white;
   cursor: default;
 }
 
-.filters input[type="text"] {
+.filters input[type="text"], .filters select {
   padding: 6px 10px;
-  border-radius: 6px;
+  border-radius: 8px;
   border: 1px solid #ccc;
 }
 
-.filters select {
-  padding: 6px 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
 
-/* Todo List */
 ul {
   list-style: none;
   padding: 0;
@@ -107,16 +106,18 @@ li {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 12px;
-  margin-bottom: 10px;
-  background-color: #f0f0f0;
-  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  background-color: #f0f4ff;
+  border-left: 5px solid #1e3a8a;
+  border-radius: 12px;
   cursor: grab;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, transform 0.2s;
 }
 
 li:hover {
-  background-color: #e0e0e0;
+  background-color: #e0ecff;
+  transform: translateY(-1px);
 }
 
 li.done {
